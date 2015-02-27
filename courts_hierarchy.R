@@ -76,3 +76,23 @@ courts <- left_join(courts, region_names, by = "region")
 courts$divisions <- NULL
 
 saveRDS(courts, "courts_hierarchy.RDS")
+
+# create and save ready-to-use maps betweene various levels of hierarchy
+courts %>%
+  filter(type == "DISTRICT") %>%
+  select(code, region, region_name) -> map_district_region
+
+courts %>%
+  filter(type == "DISTRICT") %>%
+  select(code, appeal, appeal_name) -> map_district_appeal
+
+courts %>%
+  filter(type == "REGIONAL") %>%
+  select(region, region_name, appeal, appeal_name) -> map_regional_appeal
+
+courts %>%
+  filter(type == "APPEAL") %>%
+  select(appeal, appeal_name) -> map_appeal
+
+save(map_district_appeal, map_district_region, map_regional_appeal, map_appeal,
+     file = "cc_hierarchy_mapping.RData")
